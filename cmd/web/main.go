@@ -3,15 +3,17 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/rhc07/basic-web-app/pkg/handlers"
 )
 
 const portNumber = ":8080"
 
 func main() {
 
-	http.HandleFunc("/", Home)
-	http.HandleFunc("/about", About)
-	http.HandleFunc("/euros", Euros)
+	http.HandleFunc("/", handlers.Home)
+	http.HandleFunc("/about", handlers.About)
+	http.HandleFunc("/euros", handlers.Euros)
 
 	fmt.Println(fmt.Sprintf("Starting on port number: %s", portNumber))
 	http.ListenAndServe(portNumber, nil)
