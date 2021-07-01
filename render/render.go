@@ -7,28 +7,35 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/rhc07/basic-web-app/pkg/config"
 )
 
 // template.FuncMap{} is empty. A map of functions that you can use in a template
 var functions = template.FuncMap{}
 
+// set app variable to configuration struct
+var app *config.AppConfig
+
+// NewTemplates sets the config for the template package
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
+
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
 
-	tc, err := CreateTemplateCache()
-	if err != nil {
-		log.Fatal(err)
-	}
+	tc := app.TemplateCache
 
 	t, ok := tc[tmpl]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("Could not get template from cache")
 	}
 
 	buf := new(bytes.Buffer)
 	// ignoring an error here
 	_ = t.Execute(buf, nil)
 
-	_, err = buf.WriteTo(w)
+	_, err := buf.WriteTo(w)
 	if err != nil {
 		fmt.Println("Error writing template to browser", err)
 	}
