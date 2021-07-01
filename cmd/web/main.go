@@ -2,14 +2,25 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
+	"github.com/rhc07/basic-web-app/pkg/config"
 	"github.com/rhc07/basic-web-app/pkg/handlers"
+	"github.com/rhc07/basic-web-app/render"
 )
 
 const portNumber = ":8080"
 
 func main() {
+	var app config.AppConfig
+
+	tc, err := render.CreateTemplateCache()
+	if err != nil {
+		log.Fatal("Cannot create template cache")
+	}
+
+	app.TemplateCache = tc
 
 	http.HandleFunc("/", handlers.Home)
 	http.HandleFunc("/about", handlers.About)
@@ -17,12 +28,5 @@ func main() {
 
 	fmt.Println(fmt.Sprintf("Starting on port number: %s", portNumber))
 	http.ListenAndServe(portNumber, nil)
-
-	// fmt.Println("Hello world!")
-
-	// handle func sets up the routes
-	// http.responsewriter needs to write resopnses to the user.
-	// *pointer is an address in memory.
-	// Handle func needs to send a request to an IP address/any address in memory for a successful connection
 
 }
