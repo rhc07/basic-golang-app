@@ -21,12 +21,16 @@ func main() {
 	}
 
 	app.TemplateCache = tc
+	app.UseCache = false
+
+	repo := handlers.NewRepo(&app)
+	handlers.NewHandlers(repo)
 
 	render.NewTemplates(&app)
 
-	http.HandleFunc("/", handlers.Home)
-	http.HandleFunc("/about", handlers.About)
-	http.HandleFunc("/euros", handlers.Euros)
+	http.HandleFunc("/", handlers.Repo.Home)
+	http.HandleFunc("/about", handlers.Repo.About)
+	http.HandleFunc("/euros", handlers.Repo.Euros)
 
 	fmt.Println(fmt.Sprintf("Starting on port number: %s", portNumber))
 	http.ListenAndServe(portNumber, nil)
