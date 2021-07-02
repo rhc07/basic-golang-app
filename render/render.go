@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/rhc07/basic-web-app/pkg/config"
+	"github.com/rhc07/basic-web-app/pkg/models"
 )
 
 // template.FuncMap{} is empty. A map of functions that you can use in a template
@@ -22,7 +23,12 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
+// Adding default/template data across every page
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
+
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 
 	if app.UseCache {
@@ -37,8 +43,12 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 	}
 
 	buf := new(bytes.Buffer)
+
+	// assigning template data to default data function
+	td = AddDefaultData(td)
+
 	// ignoring an error here
-	_ = t.Execute(buf, nil)
+	_ = t.Execute(buf, td)
 
 	_, err := buf.WriteTo(w)
 	if err != nil {
