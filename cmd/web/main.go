@@ -10,7 +10,7 @@ import (
 	"github.com/rhc07/basic-web-app/render"
 )
 
-const portNumber = ":8080"
+const portNumber = ":7070"
 
 func main() {
 	var app config.AppConfig
@@ -25,14 +25,16 @@ func main() {
 
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandlers(repo)
-
 	render.NewTemplates(&app)
 
-	http.HandleFunc("/", handlers.Repo.Home)
-	http.HandleFunc("/about", handlers.Repo.About)
-	http.HandleFunc("/euros", handlers.Repo.Euros)
-
 	fmt.Println(fmt.Sprintf("Starting on port number: %s", portNumber))
-	http.ListenAndServe(portNumber, nil)
+
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: Routes(&app),
+	}
+
+	err = srv.ListenAndServe()
+	log.Fatal(err)
 
 }
